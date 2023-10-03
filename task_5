@@ -1,0 +1,89 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Create a dictionary to store contacts
+contacts = {}
+
+# Function to add a new contact
+def add_contact():
+    name = name_entry.get()
+    phone = phone_entry.get()
+
+    if name and phone:
+        contacts[name] = phone
+        update_contact_list()
+        clear_fields()
+        messagebox.showinfo("Success", "Contact added successfully!")
+    else:
+        messagebox.showerror("Error", "Name and phone number are required.")
+
+# Function to update the contact list display
+def update_contact_list():
+    contact_list.delete(0, tk.END)
+    for name, phone in contacts.items():
+        contact_list.insert(tk.END, f"{name}: {phone}")
+
+# Function to search for a contact by name or phone number
+def search_contact():
+    query = search_entry.get().lower()
+    contact_list.delete(0, tk.END)
+    for name, phone in contacts.items():
+        if query in name.lower() or query in phone:
+            contact_list.insert(tk.END, f"{name}: {phone}")
+
+# Function to delete a contact
+def delete_contact():
+    selected_contact = contact_list.curselection()
+    if selected_contact:
+        selected_contact = selected_contact[0]
+        selected_contact_name = contact_list.get(selected_contact).split(":")[0].strip()
+        del contacts[selected_contact_name]
+        update_contact_list()
+        clear_fields()
+        messagebox.showinfo("Success", "Contact deleted successfully!")
+    else:
+        messagebox.showerror("Error", "Select a contact to delete.")
+
+# Function to clear input fields
+def clear_fields():
+    name_entry.delete(0, tk.END)
+    phone_entry.delete(0, tk.END)
+    search_entry.delete(0, tk.END)
+
+# Create the main application window
+root = tk.Tk()
+root.title("Contact Book")
+
+# Create input fields and labels
+name_label = tk.Label(root, text="Name:")
+name_label.pack()
+name_entry = tk.Entry(root)
+name_entry.pack()
+
+phone_label = tk.Label(root, text="Phone:")
+phone_label.pack()
+phone_entry = tk.Entry(root)
+phone_entry.pack()
+
+# Create buttons for adding and searching contacts
+add_button = tk.Button(root, text="Add Contact", command=add_contact)
+add_button.pack()
+
+search_label = tk.Label(root, text="Search:")
+search_label.pack()
+search_entry = tk.Entry(root)
+search_entry.pack()
+
+search_button = tk.Button(root, text="Search", command=search_contact)
+search_button.pack()
+
+# Create a listbox to display contacts
+contact_list = tk.Listbox(root)
+contact_list.pack()
+
+# Create a button for deleting contacts
+delete_button = tk.Button(root, text="Delete Contact", command=delete_contact)
+delete_button.pack()
+
+# Start the Tkinter main loop
+root.mainloop()
